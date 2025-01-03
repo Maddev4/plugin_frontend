@@ -1,4 +1,13 @@
 import React, { useState, useEffect } from "react";
+import {
+  Dialog,
+  DialogSurface,
+  DialogBody,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+} from "@fluentui/react-components";
 import SlideCard from "../components/SlideCard";
 import PresentationTextArea from "../components/PresentationTextArea";
 import SidebarSection from "../components/SidebarSection";
@@ -10,19 +19,20 @@ const CreateSlides = () => {
   const [activeTab, setActiveTab] = useState("found");
   const [step, setStep] = useState("first");
 
-  const [createdDeck, setCreatedDeck] = useState(null);
   const [deck, setDeck] = useState(null);
   const [mainSection, setMainSection] = useState(null);
   const [subSection, setSubSection] = useState(null);
+  const [selectedCard, setSelectedCard] = useState(null);
 
   const [selectSlides, setSelectSlides] = useState([]);
-  const [insertData, setInsertData] = useState([]);
-  const [selectedCard, setSelectedCard] = useState("");
   const [deleteSection, setDeleteSection] = useState("");
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  const [delHistory, setDelHistory] = useState([]);
 
   const tabs = [
-    { id: "found", label: "Found slides" },
-    { id: "selected", label: "Selected slides" },
+    { id: "found", label: "Found Slides" },
+    { id: "selected", label: "Selected Slides" },
   ];
 
   useEffect(() => {
@@ -33,21 +43,13 @@ const CreateSlides = () => {
     }
   }, []);
 
-  useEffect(() => {
-    if (deleteSection && deck) {
-      const updatedDeck = deck.filter((item) => item.sectionName !== deleteSection);
-      setDeck(updatedDeck);
-      setDeleteSection("");
-    }
-  }, [deleteSection, deck]);
-
   const createDeck = async (payload) => {
     try {
       const { data } = await api.post("/decks/", payload);
-      setCreatedDeck(data);
       setDeck(data.storylineSlides.sections);
       setMainSection(data.storylineSlides.sections[0].sectionName);
       setSubSection(data.storylineSlides.sections[0].subSections[0].subSectionName);
+      setSelectedCard(data.storylineSlides.sections[0].sectionName);
       setStep("second");
     } catch (error) {
       console.error("Error creating deck:", error);
@@ -96,76 +98,89 @@ const CreateSlides = () => {
 
               {/* Tabs */}
               {step === "second" && (
-                <div className="flex gap-6 border-b border-[#E6E6EA]">
-                  {tabs.map((tab) => (
-                    <button
-                      key={tab.id}
-                      onClick={() => setActiveTab(tab.id)}
-                      className={`px-1 py-2 text-sm font-medium transition-all duration-200
+                <div className="flex border-b border-[#E6E6EA] justify-between">
+                  <div className="flex gap-6">
+                    {tabs.map((tab) => (
+                      <button
+                        key={tab.id}
+                        onClick={() => setActiveTab(tab.id)}
+                        className={`px-1 py-2 text-sm font-medium transition-all duration-200
                     ${
                       activeTab === tab.id
                         ? "text-[#00BEC0] border-b-2 border-[#00BEC0] -mb-[1px]"
                         : "text-[#666666] hover:text-[#333333]"
                     }`}
-                    >
-                      {tab.label}
-                    </button>
-                  ))}
+                      >
+                        {tab.label}
+                      </button>
+                    ))}
+                  </div>
+                  <h2 className="text-lg text-[#666666]">{`${selectSlides.filter((sli) => !sli.deleted).length || "No"} Selected Slides`}</h2>
                 </div>
               )}
 
               {/* Grid Content */}
-              {activeTab === "found" && (
-                <div
-                  className={`
+              <div
+                className={`flex flex-col ${step !== "first" ? "overflow-y-auto min-h-[500px] hide-scrollbar" : ""}`}
+              >
+                <div className="flex flex-col h-full">
+                  {activeTab === "found" ? (
+                    <div
+                      className={`
                 ${
-                  step === "first"
-                    ? "flex flex-row overflow-x-auto gap-2 pb-4 hide-scrollbar"
-                    : "flex flex-col overflow-y-auto grid grid-cols-3 gap-2 pb-4 hide-scrollbar mt-[20px]"
+                  step === "first" ? "flex flex-row gap-2 pb-4 " : "flex flex-col grid grid-cols-3 gap-2 pb-4 mt-[20px]"
                 }
               `}
-                >
-                  {(mainSection && subSection
-                    ? deck
-                        ?.find((item) => item.sectionName === mainSection)
-                        ?.subSections.find((item) => item.subSectionName === subSection).slides || []
-                    : deck
-                      ? deck[0].subSections[0].slides
-                      : []
-                  ).map((slide, index) => (
-                    <div
-                      key={slide.slideId}
-                      className={`
+                    >
+                      {(subSection
+                        ? deck
+                            ?.find((item) => item.sectionName === mainSection)
+                            ?.subSections.find((item) => item.subSectionName === subSection)?.slides || []
+                        : deck
+                          ? deck[0]?.subSections[0]?.slides || []
+                          : []
+                      ).map((slide, index) => (
+                        <div
+                          key={slide.slideId}
+                          className={`
                     ${step === "first" ? "flex-shrink-0 w-[180px]" : ""}
                   `}
+                        >
+                          <SlideCard
+                            slide={slide}
+                            setSelectSlides={setSelectSlides}
+                            selectSlides={selectSlides}
+                            mainSection={mainSection}
+                            subSection={subSection}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div
+                      className={`flex flex-col ${selectSlides.length ? "grid grid-cols-3" : ""} gap-2 pb-4 mt-[20px] h-full`}
                     >
-                      <SlideCard
-                        slide={slide}
-                        setSelectSlides={setSelectSlides}
-                        selectSlides={selectSlides}
-                        mainSection={mainSection}
-                        subSection={subSection}
-                      />
+                      {selectSlides.length ? (
+                        selectSlides
+                          ?.filter((sli) => !sli.deleted)
+                          .map((slide, index) => (
+                            <div key={slide.slideId}>
+                              <SlideCard
+                                slide={slide}
+                                setSelectSlides={setSelectSlides}
+                                selectSlides={selectSlides}
+                                mainSection={slide.mainSection}
+                                subSection={slide.subSection}
+                              />
+                            </div>
+                          ))
+                      ) : (
+                        <h1 className="text-center text-gray-500 text-2xl pt-20">No Slides Selected</h1>
+                      )}
                     </div>
-                  ))}
+                  )}
                 </div>
-              )}
-              {activeTab === "selected" && (
-                <div className="flex flex-col overflow-y-auto grid grid-cols-3 gap-2 pb-4 hide-scrollbar mt-[20px]">
-                  {selectSlides?.map((slide, index) => (
-                    <div key={slide.slideId}>
-                      <SlideCard
-                        slide={slide}
-                        setSelectSlides={setSelectSlides}
-                        selectSlides={selectSlides}
-                        mainSection={slide.mainSection}
-                        subSection={slide.subSection}
-                      />
-                    </div>
-                  ))}
-                  {selectSlides.length === 0 && <h1>No slides selected</h1>}
-                </div>
-              )}
+              </div>
             </div>
             {/* Bottom Buttons */}
             {step === "second" && (
@@ -203,21 +218,59 @@ const CreateSlides = () => {
               {deck?.map((section, index) => (
                 <SidebarSection
                   key={index + 1}
-                  deleteSection={deleteSection}
                   title={section.sectionName}
                   items={section.subSections}
+                  mainSection={mainSection}
+                  subSection={subSection}
                   selectedCard={selectedCard}
                   isExpanded={index === 0} // First section expanded by default
-                  setDeleteSection={setDeleteSection}
                   setMainSection={setMainSection}
                   setSubSection={setSubSection}
                   setSelectedCard={setSelectedCard}
+                  setIsDialogOpen={setIsDialogOpen}
+                  setDeleteSection={setDeleteSection}
                 />
               ))}
             </div>
           </div>
         )}
       </div>
+
+      <Dialog open={isDialogOpen} onOpenChange={(e, data) => setIsDialogOpen(data.open)}>
+        <DialogSurface>
+          <DialogBody>
+            <DialogTitle>Delete Section</DialogTitle>
+            <DialogContent>{`Are you sure you want to delete the section "${deleteSection}"?`}</DialogContent>
+            <DialogActions>
+              <Button appearance="secondary" onClick={() => setIsDialogOpen(false)}>
+                Cancel
+              </Button>
+              <Button
+                appearance="primary"
+                onClick={() => {
+                  setDelHistory((state) => [...state, deleteSection]);
+                  setDeck((state) =>
+                    state.map((item) =>
+                      item.sectionName === deleteSection ? { ...item, deleted: delHistory.length + 1 } : item
+                    )
+                  );
+                  setSelectSlides((state) =>
+                    state.map((item) =>
+                      item.mainSection === deleteSection ? { ...item, deleted: delHistory.length + 1 } : item
+                    )
+                  );
+                  setIsDialogOpen(false);
+                  setSelectedCard(null);
+                  setMainSection(null);
+                  setSubSection(null);
+                }}
+              >
+                Delete
+              </Button>
+            </DialogActions>
+          </DialogBody>
+        </DialogSurface>
+      </Dialog>
     </div>
   );
 };

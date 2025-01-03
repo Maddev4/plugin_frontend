@@ -41,6 +41,16 @@ export default function App() {
               console.log("Inserting slide");
               await PowerPoint.run(async (context) => {
                 try {
+                  // Delete all existing slides before inserting new ones
+                  const slides = context.presentation.slides;
+                  slides.load("items");
+                  await context.sync();
+
+                  // Delete slides in reverse order to avoid index shifting issues
+                  for (let i = slides.items.length - 1; i >= 0; i--) {
+                    slides.items[i].delete();
+                  }
+                  await context.sync();
                   const presentation = context.presentation;
                   presentation.insertSlidesFromBase64(base64Only, {
                     sourceSlideIds: slideIds,
@@ -54,7 +64,7 @@ export default function App() {
           } catch (error) {
             console.error("Error handling dialog message:", error);
           } finally {
-            dialog.close();
+            // dialog.close();
           }
         });
 

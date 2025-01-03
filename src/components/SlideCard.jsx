@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 
-const SlideCard = ({ slide, setSelectSlides, selectSlides, mainSection, subSection }) => {
+const SlideCard = ({ slide, setSelectSlides = (f) => f, selectSlides, mainSection, subSection }) => {
   const tmp = selectSlides.some((item) => item.slideId === slide.slideId);
   // console.log("my_log_tmp", tmp);
   const [isChecked, setIsChecked] = React.useState(tmp);
@@ -15,6 +15,7 @@ const SlideCard = ({ slide, setSelectSlides, selectSlides, mainSection, subSecti
           fileId: slide.fileId,
           slideId: slide.slideId,
           presignedUrl: slide.presignedUrl,
+          deleted: 0,
         },
       ]);
     } else {
