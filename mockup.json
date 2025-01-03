@@ -1,0 +1,79 @@
+{
+  "deckId": "a97df2fe-434f-4e11-bfa7-804ea575af0b",
+  "storylineSlides": {
+    "sections": [
+      {
+        "sectionName": "introSection",
+        "subSections": [
+          {
+            "subSectionName": "introSubSection1",
+            "slides": [
+              {
+                "presignedUrl": "https://www.drupal.org/files/styles/grid-2-2x-square/public/announcements/drupalcon-hexagon-icon-280X280px_2.png?itok=Oxf_7ZRC",
+                "fileId": "100",
+                "slideId": "100-01"
+              },
+              {
+                "presignedUrl": "https://www.drupal.org/files/styles/grid-2-2x-square/public/announcements/drupalcon-hexagon-icon-280X280px_2.png?itok=Oxf_7ZRC",
+                "fileId": "101",
+                "slideId": "101-01"
+              },
+              {
+                "presignedUrl": "https://www.drupal.org/files/styles/grid-2-2x-square/public/announcements/drupalcon-hexagon-icon-280X280px_2.png?itok=Oxf_7ZRC",
+                "fileId": "102",
+                "slideId": "102-01"
+              },
+              {
+                "presignedUrl": "https://www.drupal.org/files/styles/grid-2-2x-square/public/announcements/drupalcon-hexagon-icon-280X280px_2.png?itok=Oxf_7ZRC",
+                "fileId": "103",
+                "slideId": "103-01"
+              }
+            ]
+          },
+          {
+            "subSectionName": "introSubSection2",
+            "slides": [
+              {
+                "presignedUrl": "https://www.drupal.org/files/styles/grid-2-2x-square/public/announcements/drupalcon-hexagon-icon-280X280px_2.png?itok=Oxf_7ZRC",
+                "fileId": "104",
+                "slideId": "104-01"
+              },
+              {
+                "presignedUrl": "https://www.drupal.org/files/styles/grid-2-2x-square/public/announcements/drupalcon-hexagon-icon-280X280px_2.png?itok=Oxf_7ZRC",
+                "fileId": "105",
+                "slideId": "105-01"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "sectionName": "industryOverview",
+        "subSections": []
+      },
+      {
+        "sectionName": "productOverview",
+        "subSections": [
+          {
+            "subSectionName": "productSubSection1",
+            "slides": [
+              {
+                "presignedUrl": "https://www.drupal.org/files/styles/grid-2-2x-square/public/announcements/drupalcon-hexagon-icon-280X280px_2.png?itok=Oxf_7ZRC",
+                "fileId": "106",
+                "slideId": "106-01"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "sectionName": "caseStudy",
+        "subSections": []
+      },
+      {
+        "sectionName": "conclusion",
+        "subSections": []
+      }
+    ]
+  }
+}
