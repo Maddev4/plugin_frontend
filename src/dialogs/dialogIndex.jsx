@@ -5,6 +5,7 @@ import CreateSlides from "./CreateSlides";
 import Sidebar from "../components/Sidebar";
 import { FluentProvider, webLightTheme } from "@fluentui/react-components";
 import "../styles/globals.css";
+import "./index.css";
 
 /* global document, Office */
 

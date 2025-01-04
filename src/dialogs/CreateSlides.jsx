@@ -210,7 +210,7 @@ const CreateSlides = () => {
 
       {/* Right Sidebar */}
       {step === "second" && (
-        <div className="w-[240px] right-0 h-full fixed top-0 border-l border-[#e6e6ea] bg-white p-4">
+        <div className="w-[240px] h-full right-0 h-full fixed top-0 border-l border-[#e6e6ea] bg-white p-4 overflow-y-auto hide-scrollbar">
           <div className="flex flex-col gap-4">
             <h3 className="text-base font-medium">Content Structure</h3>
 
