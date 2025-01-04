@@ -229,22 +229,24 @@ const CreateSlides = () => {
           <div className="flex flex-col gap-4">
             <h3 className="text-base font-medium">Content Structure</h3>
 
-            {deck?.map((section, index) => (
-              <SidebarSection
-                key={index + 1}
-                title={section.sectionName}
-                items={section.subSections}
-                mainSection={mainSection}
-                subSection={subSection}
-                selectedCard={selectedCard}
-                isExpanded={index === 0} // First section expanded by default
-                setMainSection={setMainSection}
-                setSubSection={setSubSection}
-                setSelectedCard={setSelectedCard}
-                setIsDialogOpen={setIsDialogOpen}
-                setDeleteSection={setDeleteSection}
-              />
-            ))}
+            {deck
+              // ?.filter((item) => !item.deleted)
+              .map((section, index) => (
+                <SidebarSection
+                  key={index + 1}
+                  title={section.sectionName}
+                  items={section.subSections}
+                  mainSection={mainSection}
+                  subSection={subSection}
+                  selectedCard={selectedCard}
+                  isExpanded={index === 0} // First section expanded by default
+                  setMainSection={setMainSection}
+                  setSubSection={setSubSection}
+                  setSelectedCard={setSelectedCard}
+                  setIsDialogOpen={setIsDialogOpen}
+                  setDeleteSection={setDeleteSection}
+                />
+              ))}
           </div>
         </div>
       )}
@@ -261,20 +263,27 @@ const CreateSlides = () => {
                 appearance="primary"
                 onClick={() => {
                   setDelHistory((state) => [...state, deleteSection]);
-                  setDeck((state) =>
-                    state.map((item) =>
-                      item.sectionName === deleteSection ? { ...item, deleted: delHistory.length + 1 } : item
-                    )
-                  );
+                  setDeck((state) => {
+                    const tmp = state.filter((item) => item.sectionName !== deleteSection);
+                    setSelectedCard(tmp[0].sectionName);
+                    setMainSection(tmp[0].sectionName);
+                    setSubSection(tmp[0].subSections[0].subSectionName);
+                    return tmp;
+                  });
+                  // setDeck((state) =>
+                  //   state.map((item) =>
+                  //     item.sectionName === deleteSection ? { ...item, deleted: delHistory.length + 1 } : item
+                  //   )
+                  // );
                   setSelectSlides((state) =>
                     state.map((item) =>
                       item.mainSection === deleteSection ? { ...item, deleted: delHistory.length + 1 } : item
                     )
                   );
                   setIsDialogOpen(false);
-                  setSelectedCard(null);
-                  setMainSection(null);
-                  setSubSection(null);
+                  // setSelectedCard(null);
+                  // setMainSection(null);
+                  // setSubSection(null);
                 }}
               >
                 Delete
