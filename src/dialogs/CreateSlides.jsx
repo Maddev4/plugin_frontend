@@ -13,6 +13,7 @@ import PresentationTextArea from "../components/PresentationTextArea";
 import SidebarSection from "../components/SidebarSection";
 import { DialogContext } from "./dialogIndex";
 import api from "../utils/api";
+import { toast } from "react-toastify";
 
 const CreateSlides = () => {
   const {
@@ -22,6 +23,7 @@ const CreateSlides = () => {
     setActiveTab,
     step,
     setStep,
+    setLoading,
     deck,
     setDeck,
     delHistory,
@@ -55,19 +57,25 @@ const CreateSlides = () => {
 
   const createDeck = async (payload) => {
     try {
+      setLoading(true);
       const { data } = await api.post("/decks/", payload);
       setDeck(data.storylineSlides.sections);
       setMainSection(data.storylineSlides.sections[0].sectionName);
       setSubSection(data.storylineSlides.sections[0].subSections[0].subSectionName);
       setSelectedCard(data.storylineSlides.sections[0].sectionName);
       setStep("second");
+      setLoading(false);
+      toast.success("Deck created successfully");
     } catch (error) {
       console.error("Error creating deck:", error);
+      setLoading(false);
+      toast.error("Error creating deck");
     }
   };
 
   const insertToDeck = async (payload) => {
     try {
+      setLoading(true);
       const { data } = await api.post("/decks/slides_from_file_name/", payload);
       // console.log("Data: ", data);
       // Get the dialog object using Office.context.ui
@@ -78,10 +86,13 @@ const CreateSlides = () => {
 
       // Use Office Dialog API to send message to parent
       Office.context.ui.messageParent(JSON.stringify(messageObject));
-
+      toast.success("Slides inserted to deck successfully");
       console.log("Message sent to taskpane:", messageObject);
+      setLoading(false);
     } catch (error) {
       console.error("Error sending message:", error);
+      setLoading(false);
+      toast.error("Error inserting slides to deck");
     }
   };
 
@@ -191,6 +202,10 @@ const CreateSlides = () => {
                 <button
                   className="px-4 py-2 rounded-md bg-[#00BEC0] text-white hover:bg-[#00a5a7] transition-colors"
                   onClick={() => {
+                    if (selectSlides.length === 0) {
+                      toast.error("No slides selected");
+                      return;
+                    }
                     insertToDeck(
                       // { file_name: "mckinsey.pptx" }
                       selectSlides.map((item) => ({

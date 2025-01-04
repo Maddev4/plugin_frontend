@@ -53,7 +53,12 @@ export default function App() {
                   await context.sync();
                   const presentation = context.presentation;
                   presentation.insertSlidesFromBase64(base64Only, {
-                    sourceSlideIds: slideIds,
+                    sourceSlideIds: ["3703", "2145705928"],
+                  });
+
+                  await context.sync();
+                  presentation.insertSlidesFromBase64(base64Only, {
+                    sourceSlideIds: ["3703", "2134804325"],
                   });
                   await context.sync();
                 } catch (error) {

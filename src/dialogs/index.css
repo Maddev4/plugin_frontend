@@ -1,4 +1,5 @@
 /* Make sure these styles are not being overridden */
+@import "react-toastify/dist/ReactToastify.css";
 .hide-scrollbar {
   -ms-overflow-style: none !important; /* IE and Edge */
   scrollbar-width: none !important; /* Firefox */

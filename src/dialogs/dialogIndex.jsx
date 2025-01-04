@@ -3,7 +3,10 @@ import { createRoot } from "react-dom/client";
 import SearchSlides from "./SearchSlides";
 import CreateSlides from "./CreateSlides";
 import Sidebar from "../components/Sidebar";
+import Spinner from "../components/Spinner";
 import { FluentProvider, webLightTheme } from "@fluentui/react-components";
+import { ToastContainer } from "react-toastify";
+
 import "../styles/globals.css";
 import "./index.css";
 
@@ -14,6 +17,9 @@ export const DialogContext = createContext();
 
 const Layout = ({ children, appState, setAppState = (f) => f }) => {
   const [activeButton, setActiveButton] = useState(window.localStorage.getItem("appState"));
+
+  // Loading
+  const [loading, setLoading] = useState(false);
 
   // Add shared state here
   const [filters, setFilters] = useState([]);
@@ -29,6 +35,8 @@ const Layout = ({ children, appState, setAppState = (f) => f }) => {
 
   // Create context value object
   const contextValue = {
+    loading,
+    setLoading,
     selectSlides,
     setSelectSlides,
     userQuery,
@@ -51,10 +59,18 @@ const Layout = ({ children, appState, setAppState = (f) => f }) => {
 
   return (
     <DialogContext.Provider value={contextValue}>
+      <ToastContainer />
       <div className="h-screen w-screen">
         <div className="absolute bg-white overflow-y-auto hide-scrollbar shadow-lg w-full h-full">
-          <Sidebar activeButton={activeButton} setActiveButton={setActiveButton} />
-          {children}
+          <div className="relative w-full h-full">
+            <Sidebar activeButton={activeButton} setActiveButton={setActiveButton} />
+            {children}
+            {loading && (
+              <div className="absolute top-0 left-0 w-full h-full bg-gray-200 opacity-50 flex items-center justify-center">
+                <Spinner />
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </DialogContext.Provider>
