@@ -1,11 +1,64 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, createContext } from "react";
 import { createRoot } from "react-dom/client";
 import SearchSlides from "./SearchSlides";
 import CreateSlides from "./CreateSlides";
+import Sidebar from "../components/Sidebar";
 import { FluentProvider, webLightTheme } from "@fluentui/react-components";
 import "../styles/globals.css";
 
 /* global document, Office */
+
+// Create context
+export const DialogContext = createContext();
+
+const Layout = ({ children, appState, setAppState = (f) => f }) => {
+  const [activeButton, setActiveButton] = useState(window.localStorage.getItem("appState"));
+
+  // Add shared state here
+  const [filters, setFilters] = useState([]);
+
+  // Create Slides
+  const [activeTab, setActiveTab] = useState("found");
+  const [step, setStep] = useState("first");
+  const [deck, setDeck] = useState(null);
+  const [delHistory, setDelHistory] = useState([]);
+  const [selectSlides, setSelectSlides] = useState([]);
+  const [userQuery, setUserQuery] = useState("");
+  const [selectedFile, setSelectedFile] = useState(null);
+
+  // Create context value object
+  const contextValue = {
+    selectSlides,
+    setSelectSlides,
+    userQuery,
+    setUserQuery,
+    selectedFile,
+    setSelectedFile,
+    filters,
+    setFilters,
+    appState,
+    setAppState,
+    activeTab,
+    setActiveTab,
+    step,
+    setStep,
+    deck,
+    setDeck,
+    delHistory,
+    setDelHistory,
+  };
+
+  return (
+    <DialogContext.Provider value={contextValue}>
+      <div className="h-screen w-screen">
+        <div className="absolute bg-white overflow-y-auto hide-scrollbar shadow-lg w-full h-full">
+          <Sidebar activeButton={activeButton} setActiveButton={setActiveButton} />
+          {children}
+        </div>
+      </div>
+    </DialogContext.Provider>
+  );
+};
 
 const DialogContent = () => {
   const [appState, setAppState] = useState(null);
@@ -24,9 +77,17 @@ const DialogContent = () => {
 
   switch (appState) {
     case "create":
-      return <CreateSlides />;
+      return (
+        <Layout appState={appState} setAppState={setAppState}>
+          <CreateSlides />
+        </Layout>
+      );
     case "search":
-      return <SearchSlides />;
+      return (
+        <Layout appState={appState} setAppState={setAppState}>
+          <SearchSlides />
+        </Layout>
+      );
     default:
       return <div>Loading...</div>;
   }

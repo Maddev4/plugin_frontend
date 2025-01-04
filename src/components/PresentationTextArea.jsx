@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useContext } from "react";
+import { DialogContext } from "../dialogs/dialogIndex";
 
 const PresentationTextArea = ({ step, setStep, createDeck = (f) => f }) => {
-  const [userQuery, setUserQuery] = useState("");
-  const [selectedFile, setSelectedFile] = useState(null);
+  const { userQuery, setUserQuery, selectedFile, setSelectedFile } = useContext(DialogContext);
 
   const handleKeyPress = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {

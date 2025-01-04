@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { Search } from "../icons/Search";
 import { Settings } from "../icons/Settings";
 import { Icons3 } from "../icons/Icons3";
@@ -6,8 +6,9 @@ import { Icons4 } from "../icons/Icons4";
 import { Property1Hisotry } from "../icons/Property1Hisotry";
 import { Property1Plus1 } from "../icons/Property1Plus1";
 import { Property1Template } from "../icons/Property1Template";
+import { DialogContext } from "../dialogs/dialogIndex";
 
-const Sidebar = ({ activeButton, setActiveButton }) => {
+const Sidebar = ({ activeButton, setActiveButton = (f) => f }) => {
   const buttonConfig = {
     search: {
       icon: Search,
@@ -60,6 +61,7 @@ const Sidebar = ({ activeButton, setActiveButton }) => {
     },
     // ... rest of buttonConfig
   };
+  const { setAppState } = useContext(DialogContext);
 
   const renderButton = (key) => {
     const config = buttonConfig[key];
@@ -71,6 +73,7 @@ const Sidebar = ({ activeButton, setActiveButton }) => {
         <button
           onClick={() => {
             setActiveButton(key);
+            setAppState(key);
             window.localStorage.setItem("appState", key);
             console.log("key", key);
           }}
