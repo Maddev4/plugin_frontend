@@ -1,7 +1,8 @@
 import axios from "axios";
 
 // For Create React App
-const baseURL = "http://localhost:8000/api";
+// const baseURL = "http://localhost:8000/api";
+const baseURL = "https://columnsrows.com/api";
 
 // Create custom axios instance
 const api = axios.create({
