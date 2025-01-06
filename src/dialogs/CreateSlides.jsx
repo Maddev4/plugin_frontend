@@ -208,10 +208,12 @@ const CreateSlides = () => {
                     }
                     insertToDeck(
                       // { file_name: "mckinsey.pptx" }
-                      selectSlides.map((item) => ({
-                        slide_id: item.slideId,
-                        file_id: item.fileId,
-                      }))
+                      selectSlides
+                        .filter((one) => !one.deleted)
+                        .map((item) => ({
+                          slide_id: item.slideId,
+                          file_id: item.fileId,
+                        }))
                     );
                   }}
                 >

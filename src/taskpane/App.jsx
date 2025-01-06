@@ -6,7 +6,7 @@ export default function App() {
 
   const showDialog = async (inputMode) => {
     try {
-      const dialogUrl = "https://localhost:3000/textDialog.html";
+      const dialogUrl = "https://columnsrows.com/textDialog.html";
       const dialogOptions = {
         width: 75,
         height: 75,

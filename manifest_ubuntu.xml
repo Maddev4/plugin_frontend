@@ -11,7 +11,6 @@
   <SupportUrl DefaultValue="https://www.contoso.com/help"/>
   <AppDomains>
     <AppDomain>https://www.contoso.com</AppDomain>
-    <AppDomain>https://columnsrows.com</AppDomain>
   </AppDomains>
   <Hosts>
     <Host Name="Presentation"/>
