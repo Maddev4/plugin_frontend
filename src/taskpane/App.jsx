@@ -54,6 +54,7 @@ export default function App() {
                   for (let i = slides.items.length - 1; i >= 0; i--) {
                     slides.items[i].delete();
                   }
+                  console.log("Deleted slides");
                   await context.sync();
                   const presentation = context.presentation;
                   presentation.insertSlidesFromBase64(base64Only, {
