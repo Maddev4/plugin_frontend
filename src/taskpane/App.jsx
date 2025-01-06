@@ -45,29 +45,39 @@ export default function App() {
               console.log("Inserting slide");
               await PowerPoint.run(async (context) => {
                 try {
+                  // Load the presentation first
+                  const presentation = context.presentation;
+                  await context.sync();
+
                   // Delete all existing slides before inserting new ones
                   const slides = context.presentation.slides;
                   slides.load("items");
                   await context.sync();
 
-                  // Delete slides in reverse order to avoid index shifting issues
+                  console.log("Current slides count:", slides.items.length);
+
+                  // Delete slides in reverse order
                   for (let i = slides.items.length - 1; i >= 0; i--) {
                     slides.items[i].delete();
                   }
-                  console.log("Deleted slides");
                   await context.sync();
-                  const presentation = context.presentation;
+                  console.log("Deleted existing slides");
+
+                  // Insert new slides
+                  console.log("Inserting new slides with base64:", base64Only.substring(0, 100) + "...");
+                  console.log("Using slide IDs:", slideIds);
+
                   presentation.insertSlidesFromBase64(base64Only, {
                     sourceSlideIds: slideIds,
                   });
 
-                  // await context.sync();
-                  // presentation.insertSlidesFromBase64(base64Only, {
-                  //   sourceSlideIds: ["3703", "2134804325"],
-                  // });
-                  // await context.sync();
+                  await context.sync();
+                  console.log("Slides inserted successfully");
                 } catch (error) {
-                  console.error("Error inserting slides:", error);
+                  console.error("Error in PowerPoint.run:", error);
+                  if (error.debugInfo) {
+                    console.error("Debug info:", error.debugInfo);
+                  }
                 }
               });
             }
