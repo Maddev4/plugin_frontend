@@ -6,7 +6,11 @@ export default function App() {
 
   const showDialog = async (inputMode) => {
     try {
-      const dialogUrl = "/textDialog.html";
+      // For web mode, we need to use the full URL
+      const dialogUrl = `${window.location.protocol}//${window.location.host}/textDialog.html`;
+
+      console.log("Opening dialog with URL:", dialogUrl); // For debugging
+
       const dialogOptions = {
         width: 75,
         height: 75,
