@@ -43,11 +43,13 @@ export default function App() {
 
             if (type === "insertSlide") {
               console.log("Inserting slide");
-              await PowerPoint.run(async (context) => {
-                try {
+              try {
+                await PowerPoint.run(async (context) => {
                   // Load the presentation first
                   const presentation = context.presentation;
+                  context.load(presentation);
                   await context.sync();
+                  console.log("Presentation loaded");
 
                   // Delete all existing slides before inserting new ones
                   const slides = context.presentation.slides;
@@ -63,23 +65,37 @@ export default function App() {
                   await context.sync();
                   console.log("Deleted existing slides");
 
-                  // Insert new slides
-                  console.log("Inserting new slides with base64:", base64Only.substring(0, 100) + "...");
-                  console.log("Using slide IDs:", slideIds);
+                  // Validate base64 and slideIds
+                  if (!base64Only) {
+                    throw new Error("base64Only is empty or invalid");
+                  }
+                  if (!slideIds || !slideIds.length) {
+                    throw new Error("slideIds is empty or invalid");
+                  }
 
+                  // Insert new slides
+                  console.log("Starting slide insertion...");
                   presentation.insertSlidesFromBase64(base64Only, {
                     sourceSlideIds: slideIds,
                   });
 
+                  // Important: The sync call is what we need to await, not insertSlidesFromBase64
                   await context.sync();
                   console.log("Slides inserted successfully");
-                } catch (error) {
-                  console.error("Error in PowerPoint.run:", error);
-                  if (error.debugInfo) {
-                    console.error("Debug info:", error.debugInfo);
-                  }
+
+                  // Verify the insertion
+                  slides.load("items");
+                  await context.sync();
+                  console.log("New slides count:", slides.items.length);
+                });
+              } catch (error) {
+                console.error("Error in slide insertion:", error);
+                if (error.debugInfo) {
+                  console.error("Debug info:", error.debugInfo);
                 }
-              });
+                // Optionally notify the user
+                dialog.close(); // Close the dialog on error
+              }
             }
           } catch (error) {
             console.error("Error handling dialog message:", error);
